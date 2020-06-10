@@ -1,5 +1,6 @@
 package com.app.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -7,14 +8,17 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import com.app.model.Product;
+import com.app.repository.ProductRepository;
 import com.app.validator.ProductValidator;
-import com.app.Application;
 import com.app.config.AppConfig;
 
 @Controller
 @RequestMapping("/product")
 public class ProductController {
 
+	@Autowired
+    private ProductRepository productRepository;
+	
 	@GetMapping("/list")
 	public String products(Model model) {
 		System.out.println("OK, Spring controller Product : list");
@@ -47,9 +51,13 @@ public class ProductController {
 			return "product/add";
 		}else {
 			// Add product - probably not the best way to do it - would be better to get the bean only once
+			/*
 			AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class);
 			context.getBeanFactory().createBean(Application.class).addProduct(product.getName(), product.getUnitPrice());
 			context.close();
+			*/
+			// Application removed and replaced by 
+			productRepository.save(product);
 			
 			return "product/list";
 		}
